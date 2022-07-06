@@ -14,7 +14,7 @@ YoutubeDataAPIを利用して動画情報を取得するためのコードです
 
 ## sample cron
 
-0 * * * * /Users/shinkaitomomichi/opt/anaconda3/envs/study-youtube/bin/python /Users/shinkaitomomichi/Desktop/python/cron_python/sample.py > /Users/shinkaitomomichi/Desktop/python/cron_python/sample_log.txt
+0 * * * * <pythonの絶対path> <programの絶対path>/sample.py > <programの絶対path>/sample_log.txt
 
 ## 参考
 
@@ -34,6 +34,6 @@ YoutubeDataAPIを利用して動画情報を取得するためのコードです
 
 バッテリーから定期的にスリープを解除して実行されるようにする
 
-Quotaは以下を参照
+Quotaは以下を参照   
 
 https://developers.google.com/youtube/v3/determine_quota_cost?hl=ja
