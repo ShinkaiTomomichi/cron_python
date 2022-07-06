@@ -33,3 +33,7 @@ YoutubeDataAPIを利用して動画情報を取得するためのコードです
 ファイルアクセスを許可するためにセキュリティプライバシーから`/usr/sbin/cron`にフルディスクアクセスを許可する
 
 バッテリーから定期的にスリープを解除して実行されるようにする
+
+Quotaは以下を参照
+
+https://developers.google.com/youtube/v3/determine_quota_cost?hl=ja
