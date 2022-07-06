@@ -13,7 +13,7 @@ import sys
 import get_hololive_videos_utils
 
 # 利用するディレクトリやファイルの絶対パス
-APIKEY_PATH = '/Users/shinkaitomomichi/Desktop/python/get_hololive_videos/secret/apikey'
+APIKEY_PATH = ''
 
 # これとは別に自動取得プログラムも自動化しておきたい
 def build_youtube():
@@ -40,9 +40,9 @@ if __name__ == "__main__":
     # Youtubeに接続するためのクラスを生成
     youtube = build_youtube()
 
-    channel_path = '/Users/shinkaitomomichi/Desktop/python/dataset/input/'+file_type+'_channels.csv'
-    input_dir_path = '/Users/shinkaitomomichi/Desktop/python/dataset/output/'+file_type+'/'
-    output_dir_path = '/Users/shinkaitomomichi/Desktop/python/dataset/output/'+file_type+'/'
+    channel_path = ''
+    input_dir_path = ''
+    output_dir_path = ''
 
     if update_type == 'd':
         # 更新差分を取得して保存

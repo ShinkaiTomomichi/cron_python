@@ -12,6 +12,10 @@ cron実行するためのサンプルコードです
 
 YoutubeDataAPIを利用して動画情報を取得するためのコードです
 
+## sample cron
+
+0 * * * * /Users/shinkaitomomichi/opt/anaconda3/envs/study-youtube/bin/python /Users/shinkaitomomichi/Desktop/python/cron_python/sample.py > /Users/shinkaitomomichi/Desktop/python/cron_python/sample_log.txt
+
 ## 参考
 
 - [cron の使い方（pythonスクリプト）](https://qiita.com/saira/items/76a5538a6b2556f6b339)

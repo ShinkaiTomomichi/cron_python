@@ -1,5 +1,8 @@
 # Mac
 .DS_Store
 
-# 出力ファイル
-test/*
+# pythonのキャッシュ
+__pycache__/*
+
+# ファイル名が明記されているものは除外する
+get_hololive_videos_weekly.py
