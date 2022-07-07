@@ -4,17 +4,14 @@ cronにより定期的にpythonプログラムを実行します
 
 ## 内容
 
-- sample.py
+- get_videos_weekly_template.py
 
-cron実行するためのサンプルコードです
-
-- get_hololive_videos_weekly.py
-
-YoutubeDataAPIを利用して動画情報を取得するためのコードです
+YoutubeDataAPIを利用して動画情報を取得するためのプログラムです
+パスに適当な値を利用して利用してください
 
 ## sample cron
 
-0 * * * * <pythonの絶対path> <programの絶対path>/sample.py > <programの絶対path>/sample_log.txt
+0 * * * * <pythonの絶対path> <programの絶対パス> > <logfileの絶対パス>
 
 ## 参考
 

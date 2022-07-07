@@ -10,7 +10,7 @@ from apiclient.discovery import build
 import sys
 
 # 別ファイルに切り出したメソッド
-import get_hololive_videos_utils
+import get_videos_utils
 
 # 利用するディレクトリやファイルの絶対パス
 APIKEY_PATH = ''
@@ -46,7 +46,7 @@ if __name__ == "__main__":
 
     if update_type == 'd':
         # 更新差分を取得して保存
-        get_hololive_videos_utils.get_videos_diff(youtube, channel_path, input_dir_path, output_dir_path)
+        get_videos_utils.get_videos_diff(youtube, channel_path, input_dir_path, output_dir_path)
     elif update_type == 'n':
         # 新規作成
-        get_hololive_videos_utils.get_videos_new(youtube, channel_path, output_dir_path)
+        get_videos_utils.get_videos_new(youtube, channel_path, output_dir_path)

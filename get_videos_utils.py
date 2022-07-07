@@ -45,21 +45,23 @@ def pt2sec(pt_time):
     return times
 
 
-def save_videos(youtube, video_ids, channel_name, output_dir_path, already_videos = None):
+def save_videos(youtube, video_ids, channel_name, channel_id, output_dir_path, already_videos = None):
     # 動画のIDから詳細情報を取得する
+    video_details = []
     for video_id in video_ids:
         try:
             video_detail = youtube.videos().list(
                 part = 'snippet,statistics,contentDetails', 
                 id = video_id, 
             ).execute()
-        except HttpError:
-            print('データ参照中にエラーが発生しました')
-            break
+        except HttpError as e:
+            print('save_videosにてエラーが発生しました')
+            print(e)
+            return
                 
         video_snippet = video_detail['items'][0]['snippet']
         video_statistics = video_detail['items'][0]['statistics']
-        video_contentDetails = video_detail['items'][0]['contentDetails']
+        video_content_details = video_detail['items'][0]['contentDetails']
         # snippetから取得
         date = video_snippet['publishedAt']
         title = video_snippet['title']
@@ -67,31 +69,42 @@ def save_videos(youtube, video_ids, channel_name, output_dir_path, already_video
         description = video_snippet['description']
         category_id = video_snippet['categoryId']
         # contentDetailsから取得        
-        duration = pt2sec(video_contentDetails['duration'])
-        duration_origin = video_contentDetails['duration']
+        duration = pt2sec(video_content_details['duration'])
+        duration_origin = video_content_details['duration']
         # statisticsから取得
-        views = video_statistics['viewCount']
         # 評価数、コメントが非公開の場合は0で埋める
-        like = 0
-        dislike = 0
-        comments = 0
+        view_count = 0
+        like_count = 0
+        dislike_count = 0
+        comment_count = 0
+        if 'viewCount' in video_statistics.keys():
+            view_count = video_statistics['viewCount']
         if 'likeCount' in video_statistics.keys():
-            like = video_statistics['likeCount']
+            like_count = video_statistics['likeCount']
         if 'dislikeCount' in video_statistics.keys():
-            dislike = video_statistics['dislikeCount']
+            dislike_count = video_statistics['dislikeCount']
         if 'commentCount' in video_statistics.keys():
-            comments = video_statistics['commentCount']
-            
-        # 既存のファイルに差分を追加して保存する
-        video_details_numpy = np.array([[video_id, channel_name, date, title, thumbnail, category_id, duration, duration_origin, description, views, like, dislike, comments]])            
-        video_details_pandas = pd.DataFrame(data=video_details_numpy,
-                                            columns=['Id', 'Channel', 'Date', 'Title', 'Thumbnail', 'CategoryId', 'Duration', 'DurationOriginal', 'Description', 'Viewcount', 'LikeCount', 'DislikeCount', 'CommentCount'])
+            comment_count = video_statistics['commentCount']
+                # リストのリストとして情報を格納する
+        video_details.append([video_id, channel_name, channel_id, date, title, 
+                              thumbnail, category_id, duration, duration_origin, description, 
+                              view_count, like_count, dislike_count, comment_count])
+
+    # 動画情報を書き込む
+    # video_idが取得できていない場合スキップする
+    if len(video_ids) != 0:
+        video_details_numpy = np.array(video_details)
+        video_details_pandas = pd.DataFrame(data=video_details_numpy, 
+                                            columns=['Id', 'Name', 'ChannelId', 'Date', 'Title', 
+                                                     'Thumbnail', 'CategoryId', 'Duration', 'DurationOriginal', 'Description', 
+                                                     'ViewCount', 'LikeCount', 'DislikeCount', 'CommentCount'])
+        # 差分を追加する場合
         if already_videos == None:
             videos = pd.concat([already_videos, video_details_pandas])
         else:
             videos = video_details_pandas
-    videos.to_csv(os.path.join(output_dir_path, channel_name+'_videos.csv'))
-
+        videos.to_csv(os.path.join(output_dir_path, channel_name+'_videos.csv'))
+    
 
 def get_videos_diff(youtube, channel_path, input_dir_path, output_dir_path):
     channels = pd.read_csv(channel_path, header=0)
@@ -114,9 +127,10 @@ def get_videos_diff(youtube, channel_path, input_dir_path, output_dir_path):
                 maxResults = 50, 
             ).execute()
         # HTTPエラー（主にQuota上限）だった場合
-        except HttpError:
-            print('データ取得中にエラーが発生しました')
-            break
+        except HttpError as e:
+            print('get_videos_diffにてエラーが発生しました')
+            print(e)
+            return
         for new_video_item in new_videos['items']:
             new_video_ids.append(new_video_item['id']['videoId'])
 
@@ -140,9 +154,9 @@ def get_videos_diff(youtube, channel_path, input_dir_path, output_dir_path):
 
         print(str(len(diff_video_ids))+'件の動画が追加されました')
 
-        save_videos(youtube, diff_video_ids, channel_name, output_dir_path, already_videos)
+        save_videos(youtube, diff_video_ids, channel_name, channel_id, output_dir_path, already_videos)
         
-    print('差分の取得が完了しました')
+    print('差分の追加が完了しました')
 
 
 def get_videos_new(youtube, channel_path, output_dir_path):
@@ -173,8 +187,9 @@ def get_videos_new(youtube, channel_path, output_dir_path):
                         maxResults = 50, 
                     ).execute()
                 # HTTPエラー（主にQuota上限）だった場合
-                except HttpError:
-                    print('データ参照中にエラーが発生しました')
+                except HttpError as e:
+                    print('get_videos_newにてエラーが発生しました')
+                    print(e)
                     return
             else:
                 try:
@@ -186,10 +201,11 @@ def get_videos_new(youtube, channel_path, output_dir_path):
                         pageToken = next_page_token,
                         maxResults = 50, 
                     ).execute()
-                except HttpError:
-                    print('データ参照中にエラーが発生しました')
+                except HttpError as e:
+                    print('get_videos_newにてエラーが発生しました')
+                    print(e)
                     return
-
+            
             # 動画のIDを取得する
             for video_item in videos['items']:
                 video_ids.append(video_item['id']['videoId'])
@@ -201,6 +217,6 @@ def get_videos_new(youtube, channel_path, output_dir_path):
                 break
         
         if len(video_ids) != 0:
-            save_videos(youtube, video_ids, channel_name, output_dir_path)
-        
-    print('作成が完了しました')
+            save_videos(youtube, video_ids, channel_name, channel_id, output_dir_path)
+    
+    print("新規作成が完了しました")

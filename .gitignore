@@ -5,4 +5,4 @@
 __pycache__/*
 
 # ファイル名が明記されているものは除外する
-get_hololive_videos_weekly.py
+get_videos_weekly.py
