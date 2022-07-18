@@ -56,9 +56,14 @@ def save_videos(youtube, video_ids, channel_name, channel_id, output_dir_path, a
             ).execute()
         except HttpError as e:
             print('save_videosにてエラーが発生しました')
+            print(video_id)
             print(e)
+            print(e.response.status_code) 
             return
-                
+        
+        # 公開されていない動画など、取得できない場合がある
+        if len(video_detail['items']) == 0:
+            return
         video_snippet = video_detail['items'][0]['snippet']
         video_statistics = video_detail['items'][0]['statistics']
         video_content_details = video_detail['items'][0]['contentDetails']
@@ -126,7 +131,6 @@ def get_videos_diff(youtube, channel_path, input_dir_path, output_dir_path):
                 type = "video",
                 maxResults = 50, 
             ).execute()
-        # HTTPエラー（主にQuota上限）だった場合
         except HttpError as e:
             print('get_videos_diffにてエラーが発生しました')
             print(e)
